@@ -41,17 +41,17 @@ y_motor = Motor(Ports.PORT3)
 def set_claw_dir():
     global x_dir, y_dir
     if(abs(controller.axis4.position()) > 5):
-        x_dir = controller.axis4.position()/abs(controller.axis4.position())
+        y_dir = controller.axis4.position()/abs(controller.axis4.position())
     if(abs(controller.axis3.position()) > 5):
-        y_dir = controller.axis3.position()/abs(controller.axis3.position())
+        x_dir = -controller.axis3.position()/abs(controller.axis3.position())
 
 # Sets the speed of the claw motors
 def set_claw_speed():
     global x_speed, y_speed, exponent
 
     # Speed should be raised to some power for better control
-    x_speed = abs(controller.axis4.position()**exponent)
-    y_speed = abs(controller.axis3.position()**exponent)
+    y_speed = abs(controller.axis4.position()**exponent)
+    x_speed = abs(controller.axis3.position()**exponent)
 
     # Speed should not exceed 100
     if x_speed > 100:
@@ -65,7 +65,7 @@ def move_motor():
     global x_speed, y_speed, x_dir, y_dir, x_limit, y_limit
 
     if x_speed > 5 and not x_limit:
-        x_motor_1.spin(FORWARD, x_speed*x_dir)
+        x_motor_1.spin(REVERSE, x_speed*x_dir)
         x_motor_2.spin(FORWARD, x_speed*x_dir)
     else:
         x_motor_1.stop()
@@ -96,7 +96,7 @@ def main():
         set_claw_dir()
         set_claw_speed()
         move_motor()
-        limit()
+        # limit()
         wait(10, MSEC)
 
 main()
