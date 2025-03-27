@@ -86,17 +86,19 @@ def set_claw_depression():
 
 def set_claw_rotation():
     if controller.axis1.position() > 10:
-        claw_rotation_motor.spin(FORWARD, 50)
-    elif controller.axis1.position() < -10:
         claw_rotation_motor.spin(REVERSE, 50)
+    elif controller.axis1.position() < -10:
+        claw_rotation_motor.spin(FORWARD, 50)
     else:
         claw_rotation_motor.stop()
 # Sets the direction of motion
 def set_claw_dir():
     global x_dir, y_dir
-    if(abs(controller.axis4.position()) > 5):
+    if (abs(controller.axis4.position()) > 1):
         y_dir = controller.axis4.position()/abs(controller.axis4.position())
-    if(abs(controller.axis3.position()) > 5):
+    if(controller.axis3.position()) > 1:
+        x_dir = -controller.axis3.position()/abs(controller.axis3.position())
+    if(controller.axis3.position()) < -1:
         x_dir = -controller.axis3.position()/abs(controller.axis3.position())
 
 # Sets the speed of the claw motors
@@ -104,7 +106,10 @@ def set_claw_speed():
     global x_speed, y_speed, exponent
 
     # Speed should be raised to some power for better control
+
     y_speed = abs(controller.axis4.position()**exponent)
+
+
     x_speed = abs(controller.axis3.position()**exponent)
 
     # Speed should not exceed 100
@@ -118,7 +123,10 @@ def set_claw_speed():
 def move_motor():
     global x_speed, y_speed, x_dir, y_dir, x_limit, y_limit
 
-    if x_speed > 5 and not x_limit:
+    if(x_dir == -1) and not x_limit:
+        x_motor_1.spin(REVERSE, x_speed*x_dir)
+        x_motor_2.spin(FORWARD, x_speed*x_dir)
+    elif x_dir == 1 and not x_limit:
         x_motor_1.spin(REVERSE, x_speed*x_dir)
         x_motor_2.spin(FORWARD, x_speed*x_dir)
     else:
